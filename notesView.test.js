@@ -58,7 +58,7 @@ describe("NotesView", () => {
     expect(document.querySelectorAll('div.note').length).toBe(2);
   });
 
-  xit('empties the input message field once the button is clicked', () => {
+  it('empties the input message field once the button is clicked', () => {
     const model = new NotesModel();
     const view = new NotesView(model);
 
@@ -67,7 +67,7 @@ describe("NotesView", () => {
 
     inputEl.value = 'This is cool!'
     buttonEl.click();
-
+    view.displayNotes();
     expect(inputEl.value).toBe('')
   });
 })
