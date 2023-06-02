@@ -50,4 +50,38 @@ describe("Client class", () => {
     });
     done();
   });
-});
+
+  it('creates a note and adds it to the server', () => {
+    // Instantiate the class
+    const client = new Client();
+
+    fetch.mockResponseOnce(
+      JSON.stringify({
+        notes: ["a test note", 'another test note'],
+      })
+    );
+    
+    // adding the url and options that are to be expected
+    const expectedUrl = "http://localhost:3000/notes"
+    const expectedOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ content: "a test note" }),
+    };
+    // Call the method, giving a callback function.
+    // When the HTTP response is received, the callback will be called.
+    // We then use `expect` to assert the data from the server contain
+    // what it should.
+    // making a note to be passed into createNotes call
+    const newNote = "a test note to be added";
+    client.createNote((newNote, returnedDataFromApi) => {
+      expect(fetch).toHaveBeenCalledWith(expectedUrl, expectedOptions);
+      expect(returnedDataFromApi.notes).toBe(["a test note", 'another test note']);
+      expect(returnedDataFromApi.notes.length).toBe(2);
+    // 4. Tell Jest our test can now end.
+    done();
+    });
+  });
+})
