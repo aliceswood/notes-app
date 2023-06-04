@@ -8,8 +8,5 @@ const model = new NotesModel();
 const client = new NotesClient();
 const view = new NotesView(model, client);
 
-model.addNote('This is an example note');
-
-
-view.displayNotes();
+view.displayNotesFromApi();
 
