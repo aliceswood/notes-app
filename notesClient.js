@@ -1,24 +1,21 @@
 class NotesClient {
-  loadNotes(callback) {
-    fetch("http://localhost:3000/notes")
-      .then((response) => response.json())
-      .then((data) => {
-        callback(data);
-      });
+  // removed the use of a callback function and will use .then
+  loadNotes() {
+    return fetch("http://localhost:3000/notes")
+      .then((response) => response.json());
   }
 
-  createNote(newNote, callback) {
-    fetch("http://localhost:3000/notes", {
+
+  // removed the use of a callback function and will use .then
+  createNote(newNote) {
+    return fetch("http://localhost:3000/notes", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ "content": newNote })
     })
-      .then((response) => response.json())
-      .then((data) => {
-        callback(data);
-    });
+      .then((response) => response.json());
   }
 }
 

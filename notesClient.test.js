@@ -3,65 +3,64 @@ require("jest-fetch-mock").enableMocks();
 
 describe("Client class", () => {
   beforeEach(() => {
-    fetch.resetMocks();
+    fetchMock.resetMocks();
   });
 
-  it("calls fetch and loads data", (done) => {
-    // 1. Instantiate the class
+  it("calls fetch and loads data", () => {
+    // Instantiate the class
     const client = new Client();
-    // 2. We mock the response from `fetch`
+    // Mock the response from `fetch`
     // The mocked result will depend on what your API
     // normally returns — you want your mocked response
     // to "look like" as the real response as closely as
     // possible (it should have the same fields).
-    fetch.mockResponseOnce(
-      JSON.stringify(["this is a note"])
-    );
-    // 3. We call the method, giving a callback function.
-    // When the HTTP response is received, the callback will be called.
+    fetchMock.mockResponseOnce(JSON.stringify(["this is a note"]));
+
+    // Call the method, and implement .then which will wait for the promise outcome
+    // When the HTTP response is received, the .then will be executed.
     // We then use `expect` to assert the data from the server contain
     // what it should.
-    client.loadNotes((returnedDataFromApi) => {
-      expect(returnedDataFromApi).toEqual(["this is a note"]);
-      expect(returnedDataFromApi.length).toBe(1);
-
-      // 4. Tell Jest our test can now end.
-      done();
+    client.loadNotes().then((returnedNotesFromApi) => {
+      expect(returnedNotesFromApi).toEqual(["this is a note"]);
+      expect(returnedNotesFromApi.length).toBe(1);
     });
   });
 
-  it('creates a note and adds it to the server', (done) => {
+  it("creates a note and adds it to the server", () => {
     // Instantiate the class
     const client = new Client();
     // making a note to be passed into createNotes call
     const newNote = "a test note to be added";
-
+    // Mock the response from `fetch`
+    // The mocked result will depend on what your API
+    // normally returns — you want your mocked response
+    // to "look like" as the real response as closely as
+    // possible (it should have the same fields).
     fetchMock.mockResponseOnce(
-      JSON.stringify(
-        ["a test note", "a test note to be added"],
-      )
+      JSON.stringify(["a test note", "a test note to be added"])
     );
-    
+
     // adding the url and options that are to be expected
-    const expectedUrl = "http://localhost:3000/notes"
+    const expectedUrl = "http://localhost:3000/notes";
     const expectedOptions = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ "content": "a test note to be added" }),
+      body: JSON.stringify({ content: "a test note to be added" }),
     };
-    // Call the method, giving a callback function.
-    // When the HTTP response is received, the callback will be called.
+    // Call the method, and implement .then which will wait for the promise outcome
+    // When the HTTP response is received, the .then will be executed.
     // We then use `expect` to assert the data from the server contain
     // what it should.
-    
-    client.createNote(newNote, (returnedDataFromApi) => {
+
+    client.createNote(newNote).then((returnedNotesFromApi) => {
       expect(fetchMock).toHaveBeenCalledWith(expectedUrl, expectedOptions);
-      expect(returnedDataFromApi).toEqual(["a test note", "a test note to be added"]);
-      expect(returnedDataFromApi.length).toBe(2);
-    // 4. Tell Jest our test can now end.
-    done();
+      expect(returnedNotesFromApi).toEqual([
+        "a test note",
+        "a test note to be added",
+      ]);
+      expect(returnedNotesFromApi.length).toBe(2);
     });
   });
-})
+});
