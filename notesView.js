@@ -8,10 +8,13 @@ class NotesView {
 
     this.mainContainerEl = document.querySelector('#main-container');
     this.buttonEl = document.querySelector('#input-button');
-    this.inputEl = document.querySelector('#input-message')
+    this.inputEl = document.querySelector('#input-message');
 
+    // adds the event listener to the button to watch for a click
     this.buttonEl.addEventListener('click', () => {
+      // when the button is clicked, the message is added as a new note
       this.addNewNote(this.inputEl.value);
+      // once the note is added, the input field is cleared 
       document.querySelector('#input-message').value = null
 
     });
@@ -38,12 +41,21 @@ class NotesView {
     this.displayNotes();
   }
 
+ async addNoteToApi() {
+    const noteToAdd = document.querySelector('#input-message').value;
+    await this.client.createNote(noteToAdd)
+      .then(() => {
+      this.displayNotesFromApi();
+    })
+  }
+
+  // rewritten without depending on a callback, using .then instead
   displayNotesFromApi() {
-    this.client.loadNotes(
-      (data) => {
-      this.model.setNotes(data);
-      this.displayNotes();
-    });
+    return this.client.loadNotes()
+      .then((notesData) => {
+        this.model.setNotes(notesData);
+        this.displayNotes();
+      });
   }
 }
 
