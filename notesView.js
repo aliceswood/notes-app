@@ -3,23 +3,25 @@ const NotesClient = require('./notesClient');
 
 class NotesView {
   constructor(model, client) {
-    this.model = model;
-    this.client = client;
+      this.model = model;
+      this.client = client;
+  
+      this.mainContainerEl = document.querySelector('#main-container');
+      this.buttonEl = document.querySelector('#input-button');
+      this.inputEl = document.querySelector('#input-message');
+  
+      // adds the event listener to the button to watch for a click
+      this.buttonEl.addEventListener('click', () => {
+        // when the button is clicked, the message is added as a new note
 
-    this.mainContainerEl = document.querySelector('#main-container');
-    this.buttonEl = document.querySelector('#input-button');
-    this.inputEl = document.querySelector('#input-message');
+        // this needs to be corrected to call addNoteToApi
+        this.addNewNote(this.inputEl.value);
 
-    // adds the event listener to the button to watch for a click
-    this.buttonEl.addEventListener('click', () => {
-      // when the button is clicked, the message is added as a new note
-      this.addNewNote(this.inputEl.value);
-      // once the note is added, the input field is cleared 
-      document.querySelector('#input-message').value = null
-
-    });
-    // will refactor this later
-  }
+        
+        // once the note is added, the input field is cleared 
+        document.querySelector('#input-message').value = null
+        });
+    }
 
   displayNotes() {
     document.querySelectorAll(".note").forEach((note) => {
@@ -41,7 +43,7 @@ class NotesView {
     this.displayNotes();
   }
 
- async addNoteToApi() {
+  async addNoteToApi() {
     const noteToAdd = document.querySelector('#input-message').value;
     await this.client.createNote(noteToAdd)
       .then(() => {
